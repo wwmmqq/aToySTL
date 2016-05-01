@@ -35,6 +35,7 @@ typename AVLTree<K>::node* AVLTree<K>::FindMaxPvt(node* p) {
 	return p;
 }
 
+// ll rotate
 template<class K>
 void AVLTree<K>::SingleLeftLeftRotate(node* &p) {
 	std::cout<< "sll rotate: " << p->key <<std::endl;
@@ -48,18 +49,21 @@ void AVLTree<K>::SingleLeftLeftRotate(node* &p) {
 	p = temp;
 }
 
+//lr rotate
 template<class K>
 void AVLTree<K>::DoubleLeftRightRotate(node* &p) {
 	SingleRightRightRotate(p->left);
 	SingleLeftLeftRotate(p);
 }
 
+//rl rotate
 template<class K>
 void AVLTree<K>::DoubleRightLeftRotate(node* &p) {
 	SingleLeftLeftRotate(p->right);
 	SingleRightRightRotate(p);
 }
 
+//rr rotate
 template<class K>
 void AVLTree<K>::SingleRightRightRotate(node* &p) {
 	std::cout<< "srr rotate: " << p->key <<std::endl;
@@ -79,6 +83,7 @@ void AVLTree<K>::InsertPvt(K key, node* &p) {
 	if(nullptr == p) {
 		p = new node(key);
 		size_++;
+
 	} else if (key < p->key) {
 		InsertPvt(key, p->left);
 		if (GetHeightPvt(p->left) - GetHeightPvt(p->right) == 2) {
@@ -113,8 +118,8 @@ void AVLTree<K>::ErasePvt(K key, node* &p) {
 			size_t choose = size_ % 2;
 			//random to erase left or right
 			auto pos = choose == 0 ? FindMinPvt(p->right) : FindMaxPvt(p->left);
-			p->data = pos->data;
-			return (choose == 0 ? ErasePvt(pos->data, p->right) : ErasePvt(pos->data, p->left));
+			p->key = pos->key;
+			return (choose == 0 ? ErasePvt(pos->key, p->right) : ErasePvt(pos->key, p->left));
 		}else{ //has one or no child
 			auto temp = p;
 			if (nullptr != p->left)
@@ -127,15 +132,18 @@ void AVLTree<K>::ErasePvt(K key, node* &p) {
 		}
 	}
 
-	if(p && p->height == 2) {
+	if(p) {
 		p->height = max(GetHeightPvt(p->left), GetHeightPvt(p->right)) + 1;
-		if (GetHeightPvt(p->left) -GetHeightPvt(p->right) == 2) {
+
+		if (GetHeightPvt(p->left) - GetHeightPvt(p->right) == 2) {
+			// left is higher
 			if (nullptr == p->left->right)
 				SingleLeftLeftRotate(p);
 			else
 				DoubleLeftRightRotate(p);
 
 		} else if (GetHeightPvt(p->right) - GetHeightPvt(p->left) == 2) {
+			// right is higher
 			if (nullptr == p->right->left)
 				SingleRightRightRotate(p);
 			else
@@ -144,43 +152,42 @@ void AVLTree<K>::ErasePvt(K key, node* &p) {
 	}
 }
 
-
 template<class K>
-void AVLTree<K>::PrintInorderPvt(node* ptr) {
-	if(ptr) {
-		PrintInorderPvt(ptr->left);
-		std::cout << ptr->key <<"  ";
-		PrintInorderPvt(ptr->right);
+void AVLTree<K>::PrintPreorderPvt(node* p) {
+	if(p) {
+		std::cout << p->key <<"  ";
+		PrintPreorderPvt(p->left);
+		PrintPreorderPvt(p->right);
 	}
 }
 
 template<class K>
-void AVLTree<K>::PrintPreorderPvt(node* ptr) {
-	if(ptr) {
-		std::cout << ptr->key <<"  ";
-		PrintInorderPvt(ptr->left);
-		PrintInorderPvt(ptr->right);
+void AVLTree<K>::PrintInorderPvt(node* p) {
+	if(p) {
+		PrintInorderPvt(p->left);
+		std::cout << p->key <<"  ";
+		PrintInorderPvt(p->right);
 	}
 }
 
 template<class K>
-void AVLTree<K>::PrintPostorderPvt(node* ptr) {
-	if(ptr) {
-		PrintInorderPvt(ptr->left);
-		PrintInorderPvt(ptr->right);
-		std::cout << ptr->key <<"  ";
+void AVLTree<K>::PrintPostorderPvt(node* p) {
+	if(p) {
+		PrintPostorderPvt(p->left);
+		PrintPostorderPvt(p->right);
+		std::cout << p->key <<"  ";
 	}
 }
 
 
 template<class K>
-void AVLTree<K>::DeleteAVLTree(node *ptr) {
-	if(ptr) {
-		DeleteAVLTree(ptr->left);
-		DeleteAVLTree(ptr->right);
-		if(nullptr != ptr) {
-			delete ptr;
-			ptr = nullptr;
+void AVLTree<K>::DeleteAVLTree(node *p) {
+	if(p) {
+		DeleteAVLTree(p->left);
+		DeleteAVLTree(p->right);
+		if(nullptr != p) {
+			delete p;
+			p = nullptr;
 		} else {
 			return;
 		}
