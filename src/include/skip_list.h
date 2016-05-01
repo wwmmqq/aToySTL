@@ -18,7 +18,6 @@ namespace MySTL {
 		SkipList();
 		~SkipList();
 
-
 		SkipList(const SkipList&) = delete;
 		SkipList& operator = (const SkipList&) = delete;
 
